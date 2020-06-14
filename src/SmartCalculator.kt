@@ -19,11 +19,22 @@ object SmartCalculator {
     private fun sum(num1: Int, num2: Int) = num1 + num2
 
     fun run() {
-        val str1 = scanner.next()
-        val str2 = scanner.next()
-        val num1 = if (isNumber(str1)) str1.toInt() else getNum(str1 + strErrorNum)
-        val num2 = if (isNumber(str2)) str2.toInt() else getNum(str2 + strErrorNum)
-        println(sum(num1, num2))
+        var input = scanner.nextLine()
+
+        while (input != "/exit") {
+            if (input != "") {
+                println(
+                    if (input.split(" ").size == 2) {
+                        val strings = input.split(" ").toTypedArray()
+                        val num1 = if (isNumber(strings[0])) strings[0].toInt() else getNum(strings[0] + strErrorNum)
+                        val num2 = if (isNumber(strings[1])) strings[1].toInt() else getNum(strings[1] + strErrorNum)
+                        sum(num1, num2)
+                    } else input
+                )
+            }
+            input = scanner.nextLine()
+        }
+        println("Bye!")
     }
 }
 
