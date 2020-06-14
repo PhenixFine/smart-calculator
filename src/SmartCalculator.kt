@@ -16,22 +16,24 @@ object SmartCalculator {
 
     private fun isNumber(number: String) = number.toIntOrNull() != null
 
-    private fun sum(num1: Int, num2: Int) = num1 + num2
-
     fun run() {
         var input = scanner.nextLine()
 
         while (input != "/exit") {
-            if (input != "") {
+            if (input != "" && input != "/help") {
                 println(
-                    if (input.split(" ").size == 2) {
+                    if (input.split(" ").size >= 2) {
                         val strings = input.split(" ").toTypedArray()
-                        val num1 = if (isNumber(strings[0])) strings[0].toInt() else getNum(strings[0] + strErrorNum)
-                        val num2 = if (isNumber(strings[1])) strings[1].toInt() else getNum(strings[1] + strErrorNum)
-                        sum(num1, num2)
+                        var sum1 = 0
+                        for (num in strings) {
+                            val num1 = if (isNumber(num)) num.toInt() else getNum(num + strErrorNum)
+                            sum1 += num1
+                        }
+                        sum1
                     } else input
                 )
             }
+            if (input == "/help") println("The program calculates the sum of numbers")
             input = scanner.nextLine()
         }
         println("Bye!")
