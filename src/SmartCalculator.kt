@@ -6,34 +6,45 @@ object SmartCalculator {
         var input = scanner.nextLine()
 
         while (input != "/exit") {
-            if (input != "" && input != "/help") {
-                println(
-                    if (input.split(" ").size >= 2) {
-                        val strings = input.split(" ").toTypedArray()
-                        var sum = 0
-                        var subtract = false
+            if (input != "") {
+                if (input[0] != '/') {
+                    val strings = input.split(" ").toTypedArray()
+                    var sum = 0
+                    var shouldBeNumber = true
+                    var subtract = false
+                    var print = true
 
-                        for (num in strings) {
-                            var char = num[0]
-                            if (num.length > 1 && char == '-' && char != num[1]) char = ' ' // if number is negative
+                    for (num in strings) {
+                        var char = num[0]
+                        if (num.length > 1 && (char == '-' || char == '+') && char != num[1]) char = ' '
 
-                            if (char != '+' && char != '-') {
-                                val num1 = if (isNumber(num)) num.toInt() else getNum(num)
-                                sum += if (subtract) -num1 else num1
-                                if (subtract) subtract = false
-                            } else if (char == '-') {
-                                for (char2 in num) if (char2 == '-') subtract = !subtract
+                        if (shouldBeNumber) {
+                            val num1 = if (isNumber(num)) num.toInt() else {
+                                print = false
+                                continue
+                            }
+                            sum += if (subtract) -num1 else num1
+                            if (subtract) subtract = false
+                            shouldBeNumber = false
+                        } else {
+                            if (char == '-' || char == '+') {
+                                if (char == '-') for (char2 in num) if (char2 == '-') subtract = !subtract
+                                shouldBeNumber = true
+                            } else {
+                                print = false
+                                continue
                             }
                         }
-                        sum
-                    } else input
-                )
+                    }
+                    if (print) println(sum) else invalid()
+                } else command(input)
             }
-            if (input == "/help") help()
             input = scanner.nextLine()
         }
         println("Bye!")
     }
+
+    private fun command(command: String) = if (command == "/help") help() else unknown()
 
     private fun help() {
         println(
@@ -42,17 +53,9 @@ object SmartCalculator {
         )
     }
 
-    private fun getNum(text: String): Int {
-        val strErrorNum = " was not a number, please try again: "
-        var num = text
+    private fun unknown() = println("Unknown command")
 
-        do {
-            print(num + strErrorNum)
-            num = readLine()!!
-        } while (!isNumber(num))
-
-        return num.toInt()
-    }
+    private fun invalid() = println("Invalid expression")
 
     private fun isNumber(number: String) = number.toIntOrNull() != null
 }
