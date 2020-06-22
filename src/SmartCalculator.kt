@@ -26,27 +26,29 @@ object SmartCalculator {
         var print = true
 
         for (num in strings) {
-            var char = num[0]
-            if (num.length > 1 && (char == '-' || char == '+') && char != num[1]) char = ' '
+            if (num == "") continue
+            val char = num[0]
 
             if (shouldBeNumber) {
                 val num1: Int? = if (isNumber(num)) num.toInt() else memoryGet(num)
                 if (num1 == null) {
                     print = false
                     unknownVar()
-                    continue
+                    break
                 }
                 sum += if (subtract) -num1 else num1
                 if (subtract) subtract = false
                 shouldBeNumber = false
             } else {
-                if (char == '-' || char == '+') {
+                var same = true
+                num.forEach { if (it != char && same) same = false }
+                if ((char == '-' || char == '+') && same) {
                     if (char == '-') for (char2 in num) if (char2 == '-') subtract = !subtract
                     shouldBeNumber = true
                 } else {
                     print = false
                     invalidExp()
-                    continue
+                    break
                 }
             }
         }
