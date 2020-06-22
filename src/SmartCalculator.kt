@@ -77,8 +77,8 @@ object SmartCalculator {
 
     private fun help() {
         println(
-            "The program can add and subtract numerous numbers.\n" +
-                    "Examples: 4 + 4 - 5 + 6 + -5"
+            "The program can add and subtract numerous numbers and save values. Example:\n" +
+                    "a = 4\nb = 5\na + b - 6"
         )
     }
 
