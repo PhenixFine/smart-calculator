@@ -1,9 +1,10 @@
+import java.lang.ArithmeticException
 import java.math.BigInteger
 import java.util.*
 
 object SmartCalculator {
-    private val NUMBERS = mutableMapOf<String, Long>()
-    private val STACK = Stack<Long>()
+    private val NUMBERS = mutableMapOf<String, BigInteger>()
+    private val STACK = Stack<BigInteger>()
 
     fun run() {
         val scanner = Scanner(System.`in`)
@@ -31,8 +32,8 @@ object SmartCalculator {
                 return
             }
             when {
-                isNumber(values[1]) -> NUMBERS[values[0]] = values[1].toLong()
-                memoryGet(values[1]) != null -> NUMBERS[values[0]] = memoryGet(values[1]) ?: 0
+                isNumber(values[1]) -> NUMBERS[values[0]] = values[1].toBigInteger()
+                memoryGet(values[1]) != null -> NUMBERS[values[0]] = memoryGet(values[1]) ?: 0.toBigInteger()
                 else -> Error.invalidAssign()
             }
         }
@@ -43,8 +44,8 @@ object SmartCalculator {
             for (element in postfix) {
                 when (element) {
                     "+", "-", "*", "/", "^" -> {
-                        val num2 = STACK.pop().toLong()
-                        val num1 = STACK.pop().toLong()
+                        val num2 = STACK.pop()
+                        val num1 = STACK.pop()
                         when (element) {
                             "+", "-", "*" -> operation(element[0], num1, num2)
                             "/" -> divide(num1, num2)
@@ -61,58 +62,46 @@ object SmartCalculator {
 
     private fun command(command: String) = if (command == "/help") help() else Error.unknownCMD()
 
-    private fun isNumber(number: String) = number.toLongOrNull() != null
+    private fun isNumber(number: String) = number.toBigIntegerOrNull() != null
 
-    private fun memoryGet(value: String): Long? = if (NUMBERS.containsKey(value)) NUMBERS[value] else null
+    private fun memoryGet(value: String): BigInteger? = if (NUMBERS.containsKey(value)) NUMBERS[value] else null
 
-    private fun operation(op: Char, num1: Long, num2: Long) {
-        var result = num1.toBigInteger()
-        when (op) {
-            '+' -> result += num2.toBigInteger()
-            '*' -> result *= num2.toBigInteger()
-            '-' -> result -= num2.toBigInteger()
-        }
-        if (!tooBigChk(result)) STACK.push(result.toLong())
-    }
-
-    private fun divide(num1: Long, num2: Long) {
-        if (num2 == 0L) Error.zeroDiv() else STACK.push((num1 / num2))
-    }
-
-    private fun exponent(num1: Long, num2: Long) {
-        when {
-            num2 < 0 -> Error.negExponent()
-            num2 > Int.MAX_VALUE.toLong() -> Error.calcTooLarge()
-            num2 == 0L -> STACK.push(1L)
-            else -> {
-                var num3 = num1.toBigInteger()
-                if (num2 > 1) {
-                    repeat((num2 - 1).toInt()) {
-                        num3 *= num1.toBigInteger()
-                        if (tooBigChk(num3)) return
-                    }
-                }
-                STACK.push(num3.toLong())
+    private fun operation(op: Char, num1: BigInteger, num2: BigInteger) {
+        try {
+            var result = num1
+            when (op) {
+                '+' -> result += num2
+                '*' -> result *= num2
+                '-' -> result -= num2
             }
+            STACK.push(result)
+        } catch (e: ArithmeticException) {
+            Error.calcTooLarge()
+        }
+    }
+
+    private fun divide(num1: BigInteger, num2: BigInteger) {
+        if (num2 == 0.toBigInteger()) Error.zeroDiv() else STACK.push((num1 / num2))
+    }
+
+    private fun exponent(num1: BigInteger, num2: BigInteger) {
+        if (num2 < 0.toBigInteger()) Error.negExponent() else try {
+            val result = num1.pow(num2.toInt())
+            STACK.push(result)
+        } catch (e: ArithmeticException) {
+            Error.calcTooLarge()
         }
     }
 
     private fun pushNumber(string: String) {
-        val num: Long? = if (isNumber(string)) string.toLong() else memoryGet(string)
-        if (num == null) Error.unknownVar() else STACK.push(num.toLong())
+        val num: BigInteger? = if (isNumber(string)) string.toBigInteger() else memoryGet(string)
+        if (num == null) Error.unknownVar() else STACK.push(num)
     }
 
     private fun help() {
         println(
-            "The program can add, subtract, multiply, and divide numerous whole numbers, save values and supports " +
-                    "exponentiation. Example:\na = 3\nb = 2\na + 8 * ((4 + a^b) * b + 1) - 6 / (b + 1)"
+            "The program can add, subtract, multiply, and divide numerous very large whole numbers, save values and" +
+                    " supports exponentiation. Example:\na = 3\nb = 2\na + 8 * ((4 + a ^ b) * b + 1) - 6 / (b + 1)"
         )
-    }
-
-    private fun tooBigChk(num: BigInteger): Boolean {
-        return if (num > Long.MAX_VALUE.toBigInteger() || num < Long.MIN_VALUE.toBigInteger()) {
-            Error.calcTooLarge()
-            true
-        } else false
     }
 }
