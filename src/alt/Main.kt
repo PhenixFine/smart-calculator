@@ -14,7 +14,7 @@ fun main() {
     while (input != "/exit") {
         if (input != "") {
             if (input[0] != '/') {
-                if (input.contains('=')) memoryAdd(input) else doMath(infixToPostfix(input))
+                if (input.contains('=')) memoryAdd(input) else doMath(postfixFrom(input))
             } else command(input)
         }
         input = scanner.nextLine()
