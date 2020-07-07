@@ -12,7 +12,7 @@ private const val SOME_OP = "*/^"
 private const val ALL_OP = "+-$SOME_OP"
 private const val OP_PLUS = "()$ALL_OP"
 
-fun convert(infix: String): Array<String> {
+fun infixToPostfix(infix: String): Array<String> {
     reset()
     INFIX = infix.trim()
     while (INFIX.contains("  ")) INFIX = INFIX.replace("  ", " ")
