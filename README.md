@@ -1,6 +1,7 @@
 # smart_calculator
 Stage 8 of 8 for JetBrains Academy Kotlin [Smart Calculator project](https://hyperskill.org/projects/88/stages/493/implement). 
 The program can store values, prioritize with parenthesis, add, subtract, multiply, divide, and exponent given whole numbers from the user. For a stack I used Java's Stack, instead of their stage 7 MutableList suggestion ( for the object Postfix I did make use of a MutableList for storing numbers, and operators popped from the stack - which is then converted to an array when passed back to the SmartCalculator object ).
+##### Notes on the Error object - I used it as a global variable for the objects SmartCalculator and Postfix, which is considered a rather bad thing to do ( I didn't think it would matter for just two objects, and only one of the two have reset control of the Error object ). For a larger program I would make Error a class object so that each object can keep track of their own errors internally ( though it would still violate the immutable rule, which I'm not sure how to not violate with anything that I've written so far ). If I were to implement that change in Error for this program, I would simply have Smartcalculator check if Postfix's returned array is empty ( instead of checking if Postfix triggered an error ).
 ### Requirements for stage 8 and 7
 ![smartCalculator8](https://user-images.githubusercontent.com/64429863/86519747-e68adf80-be0b-11ea-8371-b2ffef92fc23.jpg)
 ![smartCalculator7a](https://user-images.githubusercontent.com/64429863/86500317-3f03a380-bd5e-11ea-8573-de1f4877b662.jpg)
