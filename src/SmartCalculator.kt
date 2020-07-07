@@ -85,11 +85,15 @@ object SmartCalculator {
     }
 
     private fun exponent(num1: BigInteger, num2: BigInteger) {
-        if (num2 < 0.toBigInteger()) Error.negExponent() else try {
-            val result = num1.pow(num2.toInt())
-            STACK.push(result)
-        } catch (e: ArithmeticException) {
-            Error.calcTooLarge()
+        when {
+            num2 < 0.toBigInteger() -> Error.negExponent()
+            num2 > Int.MAX_VALUE.toBigInteger() -> Error.calcTooLarge()
+            else -> try {
+                val result = num1.pow(num2.toInt())
+                STACK.push(result)
+            } catch (e: ArithmeticException) {
+                Error.calcTooLarge()
+            }
         }
     }
 
