@@ -6,7 +6,7 @@ object SmartCalculator {
     private val NUMBERS = mutableMapOf<String, BigInteger>()
     private val STACK = Stack<BigInteger>()
     private val ERROR = Error()
-    
+
     fun run() {
         val scanner = Scanner(System.`in`)
         var input = scanner.nextLine()
