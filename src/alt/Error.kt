@@ -1,30 +1,32 @@
 package alt
 
-private var TRIGGERED = false
+class Error() {
+    private var triggered = false
 
-private fun printError(string: String) {
-    TRIGGERED = true
-    println(string)
+    private fun printError(string: String) {
+        triggered = true
+        println(string)
+    }
+
+    fun reset() {
+        triggered = false
+    }
+
+    fun triggered() = triggered
+
+    fun unknownCMD() = printError("Unknown command")
+
+    fun unknownVar() = printError("Unknown variable")
+
+    fun invalidExp() = printError("Invalid expression")
+
+    fun invalidAssign() = printError("Invalid assignment")
+
+    fun invalidID() = printError("Invalid identifier")
+
+    fun negExponent() = printError("negative exponent is not supported")
+
+    fun calcTooLarge() = printError("Expression is too large to calculate")
+
+    fun zeroDiv() = printError("Cannot divide by zero")
 }
-
-fun errReset() {
-    TRIGGERED = false
-}
-
-fun errTrig() = TRIGGERED
-
-fun errUnknownCMD() = printError("Unknown command")
-
-fun errUnknownVar() = printError("Unknown variable")
-
-fun errInvalidExp() = printError("Invalid expression")
-
-fun errInvalidAssign() = printError("Invalid assignment")
-
-fun errInvalidID() = printError("Invalid identifier")
-
-fun errNegExponent() = printError("negative exponent is not supported")
-
-fun errCalcTooLarge() = printError("Expression is too large to calculate")
-
-fun errZeroDiv() = printError("Cannot divide by zero")
