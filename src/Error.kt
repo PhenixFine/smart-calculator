@@ -1,16 +1,16 @@
-object Error {
-    private var TRIGGERED = false
+class Error() {
+    private var triggered = false
 
     private fun printError(string: String) {
-        TRIGGERED = true
+        triggered = true
         println(string)
     }
 
     fun reset() {
-        TRIGGERED = false
+        triggered = false
     }
 
-    fun triggered() = TRIGGERED
+    fun triggered() = triggered
 
     fun unknownCMD() = printError("Unknown command")
 

@@ -5,7 +5,8 @@ import java.util.*
 object SmartCalculator {
     private val NUMBERS = mutableMapOf<String, BigInteger>()
     private val STACK = Stack<BigInteger>()
-
+    private val ERROR = Error()
+    
     fun run() {
         val scanner = Scanner(System.`in`)
         var input = scanner.nextLine()
@@ -18,7 +19,7 @@ object SmartCalculator {
             }
             input = scanner.nextLine()
             if (STACK.isNotEmpty()) STACK.clear()
-            if (Error.triggered()) Error.reset()
+            if (ERROR.triggered()) ERROR.reset()
         }
         println("Bye!")
     }
@@ -26,21 +27,21 @@ object SmartCalculator {
     private fun memoryAdd(value: String) {
         val values = value.replace(" ", "").split('=').toTypedArray()
         val sequence: CharRange = 'a'..'z'
-        if (values.size > 2) Error.invalidAssign() else {
+        if (values.size > 2) ERROR.invalidAssign() else {
             for (char in values[0]) if (!sequence.contains(char.toLowerCase())) {
-                Error.invalidID()
+                ERROR.invalidID()
                 return
             }
             when {
                 isNumber(values[1]) -> NUMBERS[values[0]] = values[1].toBigInteger()
                 memoryGet(values[1]) != null -> NUMBERS[values[0]] = memoryGet(values[1]) ?: 0.toBigInteger()
-                else -> Error.invalidAssign()
+                else -> ERROR.invalidAssign()
             }
         }
     }
 
     private fun doMath(postfix: Array<String>) {
-        if (!Error.triggered()) {
+        if (postfix.isNotEmpty()) {
             for (element in postfix) {
                 when (element) {
                     "+", "-", "*", "/", "^" -> {
@@ -54,13 +55,13 @@ object SmartCalculator {
                     }
                     else -> pushNumber(element)
                 }
-                if (Error.triggered()) return
+                if (ERROR.triggered()) return
             }
             println(STACK.last())
         }
     }
 
-    private fun command(command: String) = if (command == "/help") help() else Error.unknownCMD()
+    private fun command(command: String) = if (command == "/help") help() else ERROR.unknownCMD()
 
     private fun isNumber(number: String) = number.toBigIntegerOrNull() != null
 
@@ -76,30 +77,30 @@ object SmartCalculator {
             }
             STACK.push(result)
         } catch (e: ArithmeticException) {
-            Error.calcTooLarge()
+            ERROR.calcTooLarge()
         }
     }
 
     private fun divide(num1: BigInteger, num2: BigInteger) {
-        if (num2 == 0.toBigInteger()) Error.zeroDiv() else STACK.push((num1 / num2))
+        if (num2 == 0.toBigInteger()) ERROR.zeroDiv() else STACK.push((num1 / num2))
     }
 
     private fun exponent(num1: BigInteger, num2: BigInteger) {
         when {
-            num2 < 0.toBigInteger() -> Error.negExponent()
-            num2 > Int.MAX_VALUE.toBigInteger() -> Error.calcTooLarge()
+            num2 < 0.toBigInteger() -> ERROR.negExponent()
+            num2 > Int.MAX_VALUE.toBigInteger() -> ERROR.calcTooLarge()
             else -> try {
                 val result = num1.pow(num2.toInt())
                 STACK.push(result)
             } catch (e: ArithmeticException) {
-                Error.calcTooLarge()
+                ERROR.calcTooLarge()
             }
         }
     }
 
     private fun pushNumber(string: String) {
         val num: BigInteger? = if (isNumber(string)) string.toBigInteger() else memoryGet(string)
-        if (num == null) Error.unknownVar() else STACK.push(num)
+        if (num == null) ERROR.unknownVar() else STACK.push(num)
     }
 
     private fun help() {

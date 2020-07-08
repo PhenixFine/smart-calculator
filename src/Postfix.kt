@@ -3,6 +3,7 @@ import java.util.*
 object Postfix {
     private val STACK = Stack<String>()
     private val POSTFIX = mutableListOf<String>()
+    private val ERROR = Error()
     private var HOLD = ""
     private var INDEX = 0
     private var LAST = 0
@@ -18,33 +19,34 @@ object Postfix {
         LAST = INFIX.lastIndex
         var shouldBeOperator = false
 
-        while (!Error.triggered() && INDEX <= LAST) {
+        while (!ERROR.triggered() && INDEX <= LAST) {
             if (INFIX[INDEX] == ' ') INDEX++
             if (shouldBeOperator) {
                 val op = chkMultiOp()
-                if (!Error.triggered()) operator(op.toString())
+                if (!ERROR.triggered()) operator(op.toString())
                 shouldBeOperator = false
             } else {
                 for (i in 1..4) {
-                    if (Error.triggered() || INDEX > LAST) break
+                    if (ERROR.triggered() || INDEX > LAST) break
                     val char = INFIX[INDEX]
                     when (i) {
                         1 -> if (char == '(') leftParen()
                         2 -> if ("+-".contains(char)) chkMinus()
-                        3 -> if (OP_PLUS.contains(char)) Error.invalidExp() else addNumber()
+                        3 -> if (OP_PLUS.contains(char)) ERROR.invalidExp() else addNumber()
                         4 -> if (char == ')') rightParen()
                     }
                 }
                 shouldBeOperator = true
             }
         }
-        if (Error.triggered()) POSTFIX.clear() else emptyStack()
+        if (ERROR.triggered()) POSTFIX.clear() else emptyStack()
         return POSTFIX.toTypedArray()
     }
 
     private fun reset() {
         if (STACK.isNotEmpty()) STACK.clear()
         if (POSTFIX.isNotEmpty()) POSTFIX.clear()
+        if (ERROR.triggered()) ERROR.reset()
         if (HOLD != "") HOLD = ""
         if (INDEX != 0) INDEX = 0
     }
@@ -56,10 +58,10 @@ object Postfix {
         while (ALL_OP.contains(INFIX[INDEX])) {
             INDEX++
             count++
-            if (chkIndexError()) return ' '
+            if (chkIndexERROR()) return ' '
             if (ALL_OP.contains(INFIX[INDEX])) {
                 if (INFIX[INDEX] != op || SOME_OP.contains(INFIX[INDEX])) {
-                    Error.invalidExp()
+                    ERROR.invalidExp()
                     return ' '
                 }
             }
@@ -76,7 +78,7 @@ object Postfix {
                     STACK.push(op)
                 }
             }
-            else -> Error.invalidExp()
+            else -> ERROR.invalidExp()
         }
     }
 
@@ -84,7 +86,7 @@ object Postfix {
         while (INFIX[INDEX] == '(') {
             STACK.push(INFIX[INDEX].toString())
             INDEX++
-            if (chkIndexError()) return
+            if (chkIndexERROR()) return
         }
     }
 
@@ -93,7 +95,7 @@ object Postfix {
             '+', '-' -> {
                 if (INFIX[INDEX] == '-') HOLD += '-'
                 INDEX++
-                chkIndexError()
+                chkIndexERROR()
             }
         }
     }
@@ -119,7 +121,7 @@ object Postfix {
                 if (STACK.isNotEmpty()) if (STACK.peek() == "(") stop = true
             }
             if (STACK.isEmpty() && !stop) {
-                Error.invalidExp()
+                ERROR.invalidExp()
                 return
             } else STACK.pop()
             INDEX++
@@ -146,16 +148,16 @@ object Postfix {
         while (STACK.isNotEmpty()) {
             val temp = STACK.pop()
             if (temp == "(" || temp == ")") {
-                Error.invalidExp()
+                ERROR.invalidExp()
                 return
             }
             POSTFIX.add(temp)
         }
     }
 
-    private fun chkIndexError(): Boolean {
+    private fun chkIndexERROR(): Boolean {
         return if (INDEX > LAST) {
-            Error.invalidExp()
+            ERROR.invalidExp()
             true
         } else false
     }
