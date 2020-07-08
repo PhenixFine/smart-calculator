@@ -40,7 +40,8 @@ fun postfixFrom(infix: String): Array<String> {
             shouldBeOperator = true
         }
     }
-    if (ERROR.triggered()) POSTFIX.clear() else emptyStack()
+    if (!ERROR.triggered()) emptyStack()
+    if (ERROR.triggered()) POSTFIX.clear()
     return POSTFIX.toTypedArray()
 }
 
