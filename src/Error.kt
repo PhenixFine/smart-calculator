@@ -1,4 +1,4 @@
-class Error() {
+open class Error {
     private var triggered = false
 
     private fun printError(string: String) {
@@ -12,11 +12,11 @@ class Error() {
 
     fun triggered() = triggered
 
+    fun invalidExp() = printError("Invalid expression")
+
     fun unknownCMD() = printError("Unknown command")
 
     fun unknownVar() = printError("Unknown variable")
-
-    fun invalidExp() = printError("Invalid expression")
 
     fun invalidAssign() = printError("Invalid assignment")
 
