@@ -1,4 +1,4 @@
-open class Error {
+class Error {
     private var triggered = false
 
     private fun printError(string: String) {
