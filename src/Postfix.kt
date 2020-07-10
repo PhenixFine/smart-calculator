@@ -78,7 +78,7 @@ private fun operator(op: String) {
                 STACK.push(op)
             }
         }
-        else -> ERROR.invalidExp()
+        else                    -> ERROR.invalidExp()
     }
 }
 
@@ -134,10 +134,10 @@ private fun opIsGreater(char: Char): Boolean {
         '+', '-' -> return false
         '*', '/' -> return when (STACK.peek()) {
             "+", "-" -> true
-            else -> false
+            else     -> false
         }
-        '^' -> return when (STACK.peek()) {
-            "^" -> false
+        '^'      -> return when (STACK.peek()) {
+            "^"  -> false
             else -> true
         }
     }
