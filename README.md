@@ -1,4 +1,4 @@
-# smart_calculator
+# smart-calculator
 Stage 8 of 8 for JetBrains Academy Kotlin [Smart Calculator project](https://hyperskill.org/projects/88/stages/493/implement). 
 The program can store values, prioritize with parenthesis, add, subtract, multiply, divide, and exponent given whole numbers from the user. For a stack I used Java's Stack, instead of their stage 7 MutableList suggestion ( for the object Postfix I did make use of a MutableList for storing numbers, and operators popped from the stack - which is then converted to an array when passed back to the SmartCalculator object ).
 ### Requirements for stage 8 and 7
